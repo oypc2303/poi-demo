@@ -111,11 +111,19 @@ public class PoiWordToolsDynamic {
         //更新数据区域
         for (int i = 0; i < culomnNum; i++) {
             CTBarSer ctBarSer = barChart.addNewSer();
+            ctBarSer.addNewIdx().setVal(i);
+            ctBarSer.addNewOrder().setVal(i);
 
             // 设置柱状图的系列名称
-            // 设置标题 用以下这个方式，可以兼容office和wps
+            // 设置标题 用以下这个方式，可以兼容office和wps（因为是动态添加，不可以直接get到，需要这样写）
             CTSerTx tx = ctBarSer.addNewTx();
-            tx.getStrRef().getStrCache().getPtList().get(0).setV(titleArr.get(i + 1));
+            CTStrRef ctStrRef = tx.addNewStrRef();
+            CTStrData ctStrData = ctStrRef.addNewStrCache();
+            ctStrData.addNewPtCount().setVal(1);
+            CTStrVal ctStrVal = ctStrData.addNewPt();
+            ctStrVal.setIdx(0);
+            ctStrVal.setV(titleArr.get(i + 1));  // 设置系列的名称
+
 
             // 设置柱状图系列的颜色，就是显示的柱子的颜色，不设置的话会默认都是黄色
             // 必须使用ACCENT_x系列的才行
@@ -128,6 +136,8 @@ public class PoiWordToolsDynamic {
 
             CTStrData strData = cat.addNewStrRef().addNewStrCache();
             CTNumData numData = val.addNewNumRef().addNewNumCache();
+            strData.setPtArray((CTStrVal[]) null); // unset old axis text
+            numData.setPtArray((CTNumVal[]) null); // unset old values
 
             // set model
             long idx = 0;
@@ -151,13 +161,6 @@ public class PoiWordToolsDynamic {
             numData.addNewPtCount().setVal(idx);
             strData.addNewPtCount().setVal(idx);
 
-            //赋值横坐标数据区域
-            String axisDataRange = new CellRangeAddress(1, dataList.size(), 0, 0).formatAsString("Sheet1", true);
-            cat.addNewStrRef().setF(axisDataRange);
-
-            //数据区域
-            String numDataRange = new CellRangeAddress(1, dataList.size(), i + position, i + position).formatAsString("Sheet1", true);
-            val.addNewNumRef().setF(numDataRange);
 
         }
         return result;
@@ -177,10 +180,20 @@ public class PoiWordToolsDynamic {
         //更新数据区域
         for (int i = 0; i < culomnNum; i++) {
             CTLineSer ctLineSer = ctLineChart.addNewSer();
+            ctLineSer.addNewIdx().setVal(i);
+            ctLineSer.addNewOrder().setVal(i);
 
             // 设置柱状图的系列名称
+            // 设置标题 用以下这个方式，可以兼容office和wps（因为是动态添加，不可以直接get到，需要这样写）
             CTSerTx tx = ctLineSer.addNewTx();
-            tx.getStrRef().getStrCache().getPtList().get(0).setV(titleArr.get(i + 1));
+            CTStrRef ctStrRef = tx.addNewStrRef();
+            CTStrData ctStrData = ctStrRef.addNewStrCache();
+            ctStrData.addNewPtCount().setVal(1);
+            CTStrVal ctStrVal = ctStrData.addNewPt();
+            ctStrVal.setIdx(0);
+            ctStrVal.setV(titleArr.get(i + 1));  // 设置系列的名称
+
+
 
             // 设置柱状图系列的颜色，就是显示的柱子的颜色，不设置的话会默认都是黄色
             // 必须使用ACCENT_x系列的才行
@@ -193,6 +206,8 @@ public class PoiWordToolsDynamic {
 
             CTStrData strData = cat.addNewStrRef().addNewStrCache();
             CTNumData numData = val.addNewNumRef().addNewNumCache();
+            strData.setPtArray((CTStrVal[]) null); // unset old axis text
+            numData.setPtArray((CTNumVal[]) null); // unset old values
 
             // set model
             long idx = 0;
@@ -215,14 +230,6 @@ public class PoiWordToolsDynamic {
 
             numData.addNewPtCount().setVal(idx);
             strData.addNewPtCount().setVal(idx);
-
-            //赋值横坐标数据区域
-            String axisDataRange = new CellRangeAddress(1, dataList.size(), 0, 0).formatAsString("Sheet1", true);
-            cat.addNewStrRef().setF(axisDataRange);
-
-            //数据区域
-            String numDataRange = new CellRangeAddress(1, dataList.size(), i + position, i + position).formatAsString("Sheet1", true);
-            val.addNewNumRef().setF(numDataRange);
 
         }
         return result;
