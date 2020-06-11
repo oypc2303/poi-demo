@@ -16,6 +16,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFChart;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
@@ -55,6 +58,9 @@ public class PoiWordTools {
         //根据属性第一列名称切换数据类型
         CTChart ctChart = chart.getCTChart();
         CTPlotArea plotArea = ctChart.getPlotArea();
+
+        // 设置标题
+        new PoiWordTitle().setBarTitle(ctChart, "我是修改后的标题");
 
         CTBarChart barChart = plotArea.getBarChartArray(0);
         List<CTBarSer> BarSerList = barChart.getSerList();  // 获取柱状图单位

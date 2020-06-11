@@ -20,7 +20,7 @@ public class BarChart {
     public static void main(String[] args) throws Exception {
 
         final String returnurl = "D:\\youxi\\jx\\barchartresult.docx";  // 结果文件
-        final String templateurl = "D:\\POI\\poi-demo\\src\\main\\resources\\barchart.docx";  // 模板文件
+        final String templateurl = "D:\\GIT_PROJECT\\poi-demo\\poi-demo\\src\\main\\resources\\barchart.docx";  // 模板文件
 
         InputStream is = new FileInputStream(new File(templateurl));
         XWPFDocument doc = new XWPFDocument(is);
