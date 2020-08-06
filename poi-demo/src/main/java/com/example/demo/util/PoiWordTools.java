@@ -48,6 +48,33 @@ public class PoiWordTools {
 
 
     /**
+     * 调用替换雷达图数据
+     */
+    public static void replaceRadarCharts(POIXMLDocumentPart poixmlDocumentPart,
+                                          List<String> titleArr, List<String> fldNameArr, List<Map<String, String>> listItemsByType) {
+        XWPFChart chart = (XWPFChart) poixmlDocumentPart;
+        chart.getCTChart();
+
+        //根据属性第一列名称切换数据类型
+        CTChart ctChart = chart.getCTChart();
+        CTPlotArea plotArea = ctChart.getPlotArea();
+
+        // 设置标题
+        new PoiWordTitle().setBarTitle(ctChart, "我是雷达图标题");
+
+        CTRadarChart radarChart = plotArea.getRadarChartArray(0);
+        List<CTRadarSer> radarList = radarChart.getSerList();  // 获取雷达图单位
+
+        //刷新内置excel数据
+        new PoiWordTools().refreshExcel(chart, listItemsByType, fldNameArr, titleArr);
+        //刷新页面显示数据
+        refreshRadarStrGraphContent(radarChart, radarList, listItemsByType, fldNameArr, 1);
+
+
+    }
+
+
+    /**
      * 调用替换柱状图数据
      */
     public static void replaceBarCharts(POIXMLDocumentPart poixmlDocumentPart,
@@ -650,6 +677,79 @@ public class PoiWordTools {
 
 
         return text;
+    }
+
+
+    /**
+     * 刷新雷达图数据方法
+     *
+     * @param typeChart
+     * @param serList
+     * @param dataList
+     * @param fldNameArr
+     * @param position
+     * @return
+     */
+    public static boolean refreshRadarStrGraphContent(Object typeChart,
+                                                      List<?> serList, List<Map<String, String>> dataList, List<String> fldNameArr, int position) {
+        boolean result = true;
+        //更新数据区域
+        for (int i = 0; i < serList.size(); i++) {
+            CTAxDataSource cat = null;
+            CTNumDataSource val = null;
+            CTRadarSer ser = ((CTRadarChart) typeChart).getSerArray(i);
+
+
+            // 设置标题 用以下这个方式，可以兼容office和wps
+            CTSerTx tx = ser.getTx();
+            // tx.getStrRef().getStrCache().getPtList().get(0).setV("嘿嘿嘿");
+
+            // Category Axis Data
+            cat = ser.getCat();
+            // 获取图表的值
+            val = ser.getVal();
+
+            // strData.set
+            CTNumData strData = cat.getNumRef().getNumCache();
+            CTNumData numData = val.getNumRef().getNumCache();
+            strData.setPtArray((CTNumVal[]) null); // unset old axis text
+            numData.setPtArray((CTNumVal[]) null); // unset old values
+
+            // set model
+            long idx = 0;
+            for (int j = 0; j < dataList.size(); j++) {
+                //判断获取的值是否为空
+                String value = "0";
+                if (new BigDecimal(dataList.get(j).get(fldNameArr.get(i + position))) != null) {
+                    value = new BigDecimal(dataList.get(j).get(fldNameArr.get(i + position))).toString();
+                }
+                if (!"0".equals(value)) {
+                    CTNumVal numVal = numData.addNewPt();//序列值
+                    numVal.setIdx(idx);
+                    numVal.setV(value);
+                }
+                CTNumVal sVal = strData.addNewPt();//序列名称
+                sVal.setIdx(idx);
+                sVal.setV(dataList.get(j).get(fldNameArr.get(0)));
+                idx++;
+            }
+            numData.getPtCount().setVal(idx);
+            strData.getPtCount().setVal(idx);
+
+
+            //赋值横坐标数据区域
+            String axisDataRange = new CellRangeAddress(1, dataList.size(), 0, 0)
+                    .formatAsString("Sheet1", true);
+            cat.getNumRef().setF(axisDataRange);
+
+            //数据区域
+            String numDataRange = new CellRangeAddress(1, dataList.size(), i + position, i + position)
+                    .formatAsString("Sheet1", true);
+            val.getNumRef().setF(numDataRange);
+
+
+        }
+        return result;
     }
 
 

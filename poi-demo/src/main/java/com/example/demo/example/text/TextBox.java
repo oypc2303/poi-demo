@@ -38,7 +38,7 @@ public class TextBox {
     public static void main(String[] args) throws Exception {
 
         final String returnurl = "D:\\youxi\\jx\\textbox.docx";  // 结果文件
-        final String templateurl = "D:\\直真科技工作相关\\demo\\src\\main\\resources\\textbox.docx";  // 模板文件
+        final String templateurl = "D:\\GIT_PROJECT\\poi-demo\\poi-demo\\src\\main\\resources\\textbox.docx";  // 模板文件
 
         InputStream is = new FileInputStream(new File(templateurl));
         XWPFDocument doc = new XWPFDocument(is);
