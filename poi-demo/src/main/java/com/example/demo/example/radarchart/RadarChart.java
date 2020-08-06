@@ -129,6 +129,7 @@ public class RadarChart {
         listItemsByType.add(base2);
         listItemsByType.add(base3);
 
+
         // 注意这里的key值
         POIXMLDocumentPart poixmlDocumentPart = chartsMap.get("/word/charts/chart1.xml");
         new PoiWordTools().replaceRadarCharts(poixmlDocumentPart, titleArr, fldNameArr, listItemsByType);

@@ -60,7 +60,7 @@ public class PoiWordTools {
         CTPlotArea plotArea = ctChart.getPlotArea();
 
         // 设置标题
-        new PoiWordTitle().setBarTitle(ctChart, "我是雷达图标题");
+        // new PoiWordTitle().setBarTitle(ctChart, "我是雷达图标题");
 
         CTRadarChart radarChart = plotArea.getRadarChartArray(0);
         List<CTRadarSer> radarList = radarChart.getSerList();  // 获取雷达图单位
@@ -710,9 +710,17 @@ public class PoiWordTools {
             val = ser.getVal();
 
             // strData.set
-            CTNumData strData = cat.getNumRef().getNumCache();
+            if (null != cat.getNumRef()) {
+                cat.unsetNumRef();
+            }
+            if (null != cat.getStrRef()) {
+                cat.unsetStrRef();
+            }
+            cat.addNewStrRef().addNewStrCache();
+
+            CTStrData strData = cat.getStrRef().getStrCache();
             CTNumData numData = val.getNumRef().getNumCache();
-            strData.setPtArray((CTNumVal[]) null); // unset old axis text
+            strData.setPtArray((CTStrVal[]) null); // unset old axis text
             numData.setPtArray((CTNumVal[]) null); // unset old values
 
             // set model
@@ -728,19 +736,19 @@ public class PoiWordTools {
                     numVal.setIdx(idx);
                     numVal.setV(value);
                 }
-                CTNumVal sVal = strData.addNewPt();//序列名称
+                CTStrVal sVal = strData.addNewPt();//序列名称
                 sVal.setIdx(idx);
                 sVal.setV(dataList.get(j).get(fldNameArr.get(0)));
                 idx++;
             }
+            strData.addNewPtCount().setVal(idx);
             numData.getPtCount().setVal(idx);
-            strData.getPtCount().setVal(idx);
 
 
             //赋值横坐标数据区域
             String axisDataRange = new CellRangeAddress(1, dataList.size(), 0, 0)
                     .formatAsString("Sheet1", true);
-            cat.getNumRef().setF(axisDataRange);
+            cat.getStrRef().setF(axisDataRange);
 
             //数据区域
             String numDataRange = new CellRangeAddress(1, dataList.size(), i + position, i + position)
